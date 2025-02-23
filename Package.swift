@@ -9,7 +9,7 @@ let package = Package(
         .library(
             name: "Cache",
             targets: ["Cache"]
-        ),
+        )
     ],
     targets: [
         .target(name: "Cache"),
@@ -18,6 +18,6 @@ let package = Package(
             dependencies: [
                 .target(name: "Cache")
             ]
-        ),
+        )
     ]
 )
