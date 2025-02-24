@@ -43,7 +43,7 @@ platform :ios do
     )
     sh "cd ../#{BUILD_PRODUCTS_PATH} && mv $(find . -name '*.xctestrun') #{TESTRUN_FILE_NAME}"
     copy_artifacts(
-      target_path: BUILD_OUTPUT_PATH,
+      target_path: "#{BUILD_OUTPUT_PATH}/Build",
       artifacts: [BUILD_PRODUCTS_PATH]
     )
   end
@@ -56,7 +56,9 @@ platform :ios do
     ]
     xcodebuild(
       buildlog_path: TEST_OUTPUT_PATH,
+      derivedDataPath: BUILD_OUTPUT_PATH,
       destination: DESTINATION,
+      enable_code_coverage: true,
       result_bundle_path: TEST_RESULT_PATH,
       scheme: SCHEME,
       xctestrun: TESTRUN_FILE_PATH,

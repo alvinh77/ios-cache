@@ -1,0 +1,70 @@
+name: Build and Test Package
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+  
+      - name: Set Environments
+        uses: ./.github/workflows/actions/setup-environments
+
+      - name: Cache Bundler
+        uses: ./.github/workflows/actions/cache-bundler
+      
+      - name: Bootstrap
+        shell: bash
+        run: scripts/bootstrap.sh
+
+      - name: Build Package
+        run: bundle exec fastlane ios build_package
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build_outputs
+          path: outputs/build_outputs
+
+  tests:
+    runs-on: macos-15
+    needs: [build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: build_outputs
+          path: outputs/build_outputs
+
+      - name: Set Environments
+        uses: ./.github/workflows/actions/setup-environments
+
+      - name: Cache Bundler
+        uses: ./.github/workflows/actions/cache-bundler
+      
+      - name: Bootstrap
+        shell: bash
+        run: scripts/bootstrap.sh
+
+      - name: Run Tests
+        run: bundle exec fastlane ios test_package
+      
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test_outputs
+          path: outputs/test_outputs
