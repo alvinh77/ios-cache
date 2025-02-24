@@ -1,0 +1,66 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+# Constant Values
+DERIVED_DATA_PATH = "outputs/derived_data"
+BUILD_PRODUCTS_PATH = "#{DERIVED_DATA_PATH}/Build/Products"
+BUILD_OUTPUT_PATH = "outputs/build_outputs"
+TEST_OUTPUT_PATH = "outputs/test_outputs"
+TEST_RESULT_PATH = "outputs/test_outputs/results.xcresult"
+TESTRUN_FILE_NAME = "tests.xctestrun"
+TESTRUN_FILE_PATH = "#{BUILD_OUTPUT_PATH}/tests.xctestrun"
+DESTINATION = "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro"
+SCHEME = "ios-cache"
+
+platform :ios do
+  desc "Build package for tests"
+  lane :build_package do
+    xcargs = [
+      "build-for-testing"
+    ]
+    xcodebuild(
+      buildlog_path: BUILD_OUTPUT_PATH,
+      clean: true,
+      derivedDataPath: DERIVED_DATA_PATH,
+      configuration: "Debug",
+      destination: DESTINATION,
+      scheme: SCHEME,
+      xcargs: xcargs.join(" ")
+    )
+    sh "cd ../#{BUILD_PRODUCTS_PATH} && mv $(find . -name '*.xctestrun') #{TESTRUN_FILE_NAME}"
+    copy_artifacts(
+      target_path: BUILD_OUTPUT_PATH,
+      artifacts: [BUILD_PRODUCTS_PATH]
+    )
+  end
+
+  desc "Test package"
+  lane :test_package do
+    sh "rm -rf ../#{TEST_RESULT_PATH}"
+    xcargs = [
+      "test-without-building"
+    ]
+    xcodebuild(
+      buildlog_path: TEST_OUTPUT_PATH,
+      destination: DESTINATION,
+      result_bundle_path: TEST_RESULT_PATH,
+      scheme: SCHEME,
+      xctestrun: TESTRUN_FILE_PATH,
+      xcargs: xcargs.join(" ")
+    )
+  end
+end

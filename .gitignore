@@ -85,8 +85,10 @@ Dependencies/
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
-fastlane/test_output
-fastlane/build_output
+fastlane/test_outputs
+fastlane/build_outputs
+fastlane/build_log
+fastlane/derived_data
 
 # Code Injection
 #
@@ -106,8 +108,4 @@ iOSInjectionProject/
 # Cache
 .caches/
 caches/
-derived_data/
 outputs/
-packages_cache/
-build_outputs/
-test_outputs/
