@@ -1,0 +1,13 @@
+name: 'Setup iOS Environment'
+description: 'Set up Ruby, Bundler, and install dependencies'
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.3.0
+
+    - name: Switch to Xcode 16.2
+      shell: bash
+      run: sudo xcode-select --switch /Applications/Xcode_16.2.app

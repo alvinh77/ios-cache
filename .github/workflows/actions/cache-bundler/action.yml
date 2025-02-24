@@ -1,0 +1,11 @@
+name: 'Cache Bundler'
+description: 'Cache Bundler'
+runs:
+  using: "composite"
+  steps:
+    - name: Cache Bundler Installation
+      uses: actions/cache@v4
+      with:
+        path: .cache/bundle
+        key: bundler-cache-${{ runner.os }}-${{ hashFiles('Gemfile.lock') }}
+        restore-keys: bundler-cache-${{ runner.os }}-
