@@ -64,5 +64,10 @@ platform :ios do
       xctestrun: TESTRUN_FILE_PATH,
       xcargs: xcargs.join(" ")
     )
+
+    coverage_path = "../#{BUILD_OUTPUT_PATH}/Build/ProfileData/*/Coverage.profdata"
+    binary = "../#{BUILD_OUTPUT_PATH}/Build/Products/*/Cache.o"
+    lcov_path = "../#{TEST_OUTPUT_PATH}/coverage.lcov"
+    sh "xcrun llvm-cov export -format=lcov -instr-profile #{coverage_path} #{binary} > #{lcov_path}"
   end
 end
